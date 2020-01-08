@@ -1,6 +1,34 @@
+# Load libraries that are supposed to be installed by Docker
 library(bleaguer)
 library(dplyr)
 library(ggplot2)
+
+# Pre-defined objects
+b.current.season
+b.teams
+b.events
+b.games
+b.games.summary
+b.games.boxscore
+
+# Check how many games bleaguer gets at this moment. Please note bleaguer is NOT ALWAYS up-to-date.
+GetNumOfGames(season = b.current.season)
+
+# Get standings
+GetStanding(season = b.current.season, league = "B1")
+
+# Search a player
+SearchPlayer("富樫")
+
+# Get boxscore for a player
+GetBoxscore(9055, season = b.current.season)
+
+# Get per-team per-game record. Please note you have 2 records for 1 game since each team has a record for the game.
+df <- GetGameSummary()
+View(df)
+
+# Visualize examples
+
 
 df <- subset(GetGameSummary(),
              Season == b.current.season &
