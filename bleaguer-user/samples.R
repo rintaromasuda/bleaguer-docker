@@ -3,6 +3,9 @@ library(bleaguer)
 library(dplyr)
 library(ggplot2)
 
+# Set Japanese env
+Sys.setlocale(locale = 'Japanese')
+
 # Pre-defined objects
 b.current.season
 b.teams
@@ -26,6 +29,19 @@ GetBoxscore(9055, season = b.current.season)
 # Get per-team per-game record. Please note you have 2 records for 1 game since each team has a record for the game.
 df <- GetGameSummary()
 View(df)
+
+# Summarize examples
+
+# Get per-team per-season average points and average opponent points
+df %>%
+  group_by(TeamId) %>%
+  mutate(LatestTeamName = last(TeamName)) %>%
+  filter(Category == "Regular") %>%
+  group_by(TeamId, LatestTeamName, Season) %>%
+  summarize(AvgPts = mean(PTS),
+            AvgOppPts = mean(Opp.PTS)) %>%
+  as.data.frame()
+
 
 # Visualize examples
 
