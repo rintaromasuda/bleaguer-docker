@@ -1,9 +1,11 @@
 FROM rocker/tidyverse:3.5.2
 
-COPY test.R .
+COPY Main.R .
+COPY Common.R .
+COPY GetGamesData.R .
 
 RUN install2.r --error \
       rvest \
       RSelenium
 
-CMD ["Rscript", "test.R"]
+CMD ["Rscript", "Main.R"]
