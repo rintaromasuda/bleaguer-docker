@@ -5,6 +5,12 @@ COPY Common.R .
 COPY GetGamesData.R .
 COPY GetSummaryData.R .
 
+RUN set -x && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+      git
+
 RUN install2.r --error \
       rvest \
       RSelenium
