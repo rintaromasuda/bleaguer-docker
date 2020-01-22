@@ -3,41 +3,41 @@
   Sys.sleep(0.5) # Consider making this event-based
   
   pageSource <- webDr$getPageSource()
-  htmlGame <- read_html(pageSource[[1]], encoding = "utf-8")
+  htmlGame <- xml2::read_html(pageSource[[1]], encoding = "utf-8")
   
   ########
   # Parsing all the necessary information
   ########
   date <- htmlGame %>%
-    html_nodes("#game__top__inner > div.date_wrap > p:nth-child(2) > span") %>%
-    html_text()
+    rvest::html_nodes("#game__top__inner > div.date_wrap > p:nth-child(2) > span") %>%
+    rvest::html_text()
   
   arena <- htmlGame %>%
-    html_nodes("#game__top__inner > div.place_wrap > p.StadiumNameJ") %>%
-    html_text()
+    rvest::html_nodes("#game__top__inner > div.place_wrap > p.StadiumNameJ") %>%
+    rvest::html_text()
   arena <- gsub("会場：", "", arena)
   
   attendance <- htmlGame %>%
-    html_nodes("#game__top__inner > div.place_wrap > p.Attendance") %>%
-    html_text()
+    rvest::html_nodes("#game__top__inner > div.place_wrap > p.Attendance") %>%
+    rvest::html_text()
   attendance <- as.integer(gsub("人", "", gsub("人数：", "", attendance)))  
 
   home <- htmlGame %>%
-    html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.home.win > div.team_name > p.for-sp") %>%
-    html_text()
+    rvest::html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.home.win > div.team_name > p.for-sp") %>%
+    rvest::html_text()
   if (identical(home, character(0))) {
     home <- htmlGame %>%
-      html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.home > div.team_name > p.for-sp") %>%
-      html_text()
+      rvest::html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.home > div.team_name > p.for-sp") %>%
+      rvest::html_text()
   }
   
   away <- htmlGame %>%
-    html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.away.win > div.team_name > p.for-sp") %>%
-    html_text()
+    rvest::html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.away.win > div.team_name > p.for-sp") %>%
+    rvest::html_text()
   if (identical(away, character(0))) {
     away <- htmlGame %>%
-      html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.away > div.team_name > p.for-sp") %>%
-      html_text()
+      rvest::html_nodes("#game__top__inner > div.result_wrap > div.team_wrap.away > div.team_name > p.for-sp") %>%
+      rvest::html_text()
   }
   
   result <- data.frame(
@@ -97,11 +97,11 @@ GetGamesData <- function(webDr, season){
         webDr$navigate(urlTeam)
         Sys.sleep(0.5) # Consider making this event-based
         pageSource <- webDr$getPageSource()
-        htmlTeam <- read_html(pageSource[[1]], encoding = "utf-8")
+        htmlTeam <- xml2::read_html(pageSource[[1]], encoding = "utf-8")
         
         urlGames <- htmlTeam %>%
-          html_nodes("#round_list > dd > ul > li > div.gamedata_left > div.data_link > div.state_link.btn.report > a") %>%
-          html_attr("href")
+          rvest::html_nodes("#round_list > dd > ul > li > div.gamedata_left > div.data_link > div.state_link.btn.report > a") %>%
+          rvest::html_attr("href")
         for (urlGame in urlGames) {
           startStr <- "ScheduleKey="
           key <- substring(urlGame,

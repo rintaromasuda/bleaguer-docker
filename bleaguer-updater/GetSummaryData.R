@@ -4,10 +4,10 @@
   print(urlDetail)
   
   webDr$navigate(urlDetail)
-  Sys.sleep(0.5)
+  Sys.sleep(0.5) # Consider making this event-based
   pageSource <- webDr$getPageSource()
-  htmlDetail <- read_html(pageSource[[1]])
-  tablesDetail <- html_table(htmlDetail)
+  htmlDetail <- xml2::read_html(pageSource[[1]])
+  tablesDetail <- rvest::html_table(htmlDetail)
   
   # Table for quarter and overtime scores. We do NOT support overtime 5th and later.
   qtScore <- subset(tablesDetail[[1]], X2 != "EX1" & X2 != "EX2" & X2 != "EX3" & X2 != "EX4")
@@ -142,12 +142,100 @@
 }
 
 GetSummaryData <- function(webDr, dataGames){
+  library(dplyr)
+  library(rvest)
+  
+  result <- data.frame()
+  
   for (idx in seq(1:nrow(dataGames))) {
     key <- dataGames[idx,]$ScheduleKey
     homeTeamId <- dataGames[idx,]$HomeTeamId
     awayTeamId <- dataGames[idx,]$AwayTeamId
 
     record <- .ScrapeSummaryPage(webDr, key, homeTeamId, awayTeamId)
-    print(record)
+    result <- rbind(result, record)
   }
+  
+  result$Q1 <- result$`1Q`
+  result$Q2 <- result$`2Q`
+  result$Q3 <- result$`3Q`
+  result$Q4 <- result$`4Q`
+  
+  result$OT1 <- result$EX1
+  result$OT2 <- result$EX2
+  result$OT3 <- result$EX3
+  result$OT4 <- result$EX4
+  
+  result$PTS <- result$F
+  
+  result$F2GM <- result$`2 Points FGM`
+  result$F2GA <- result$`2 Points FGA`
+  result$F3GM <- result$`3 Points FGM`
+  result$F3GA <- result$`3 Points FGA`
+  result$FTM <- result$`Free-ThrowsM`
+  result$FTA <- result$`Free-ThrowsA`
+  
+  result$OR <- result$`Offensive Rebounds`
+  result$DR <- result$`Defensive Rebounds`
+  result$TR <- result$`Total Rebounds`
+  
+  result$AS <- result$Assist
+  
+  result$TO <- result$Turnover
+  
+  result$ST <- result$Steals
+  
+  result$BS <- result$Blocks
+  
+  result$F <- result$Fouls
+  
+  result$PtsFastBreak <- result$`Fast Break Points`
+  result$PtsBiggestLead <- result$`Biggest Lead`
+  result$PtsInPaint <- result$`Points in the Paint`
+  result$PtsFromTurnover <- result$`Points From Turnover`
+  result$PtsSecondChance <- result$`Second Chance Points`
+  
+  result$BiggestScoringRun <- result$`Biggest Scoring Run`
+  
+  result$LeadChanges <- result$`Lead Changes`
+  result$TimesTied <-  result$`Times Tied`
+  
+  result <- result %>%
+    dplyr::select(
+      "ScheduleKey",
+      "TeamId",
+      "PTS",
+      "Q1",
+      "Q2",
+      "Q3",
+      "Q4",
+      "OT1",
+      "OT2",
+      "OT3",
+      "OT4",
+      "F2GM",
+      "F2GA",
+      "F3GM",
+      "F3GA",
+      "FTM",
+      "FTA",
+      "OR",
+      "DR",
+      "TR",
+      "AS",
+      "TO",
+      "ST",
+      "BS",
+      "F",
+      "PtsBiggestLead",
+      "PtsInPaint",
+      "PtsFastBreak",
+      "PtsSecondChance",
+      "PtsFromTurnover",
+      "BiggestScoringRun",
+      "LeadChanges",
+      "TimesTied"
+    )
+  
+  return(result)
 }
