@@ -22,20 +22,23 @@ exitStatus <- 0
 tryCatch({
   webDr <- GetWebDriver("selenium", 4444L)
 
-  print("Get data for games...")
+  print("######################")
+  print("# Get data for games #")
+  print("######################")
   dataGames <- GetGamesData(webDr, "2019-20")
-  print(head(dataGames))
-  write.csv(dataGames, "games.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
-  
   if(nrow(dataGames) <= 0)
   {
     stop("No game to be processed.")
   }
+  print(head(dataGames))
+  write.csv(dataGames, "games.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
-  print("Get data for summary...")
+  print("########################")
+  print("# Get data for summary #")
+  print("########################")
   dataSummary <- GetSummaryData(webDr, dataGames)
   print(head(dataSummary))
-  #write.csv(dataSummary, "summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataSummary, "summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
 
   print("Get data for boxscore...")
   #dataBoxscore <- GetBoxscoreData(webDr, dataGames$ScheduleKey)

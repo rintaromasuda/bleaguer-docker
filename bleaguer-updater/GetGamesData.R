@@ -127,9 +127,9 @@ GetGamesData <- function(webDr, season){
                         record$AwayTeam))
             
             result <- rbind(result, record)
-            break
           }
         }
+        break
       }
     }
   }
