@@ -13,6 +13,7 @@ print(paste0("Working Dir: ", getwd()))
 source("Common.R")
 source("GetGamesData.R")
 source("GetSummaryData.R")
+source("GetBoxscoreData.R")
 
 ########
 # Main #
@@ -40,10 +41,12 @@ tryCatch({
   print(head(dataSummary))
   write.csv(dataSummary, "summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
 
-  print("Get data for boxscore...")
-  #dataBoxscore <- GetBoxscoreData(webDr, dataGames$ScheduleKey)
-  #print(head(dataBoxscore))
-  #write.csv(dataBoxscore, "boxscore.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  print("#########################")
+  print("# Get data for boxscore #")
+  print("#########################")
+  dataBoxscore <- GetBoxscoreData(webDr, dataGames)
+  print(head(dataBoxscore))
+  write.csv(dataBoxscore, "boxscore.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
   webDr$close()
 
