@@ -7,8 +7,8 @@ COPY GetSummaryData.R .
 COPY GetBoxscoreData.R .
 
 RUN set -x && \
-#    apt-get update && \
-#    apt-get upgrade -y && \
+    apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
       git
 

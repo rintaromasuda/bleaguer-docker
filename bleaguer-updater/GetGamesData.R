@@ -129,7 +129,6 @@ GetGamesData <- function(webDr, season){
             result <- rbind(result, record)
           }
         }
-        break
       }
     }
   }

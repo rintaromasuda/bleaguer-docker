@@ -6,6 +6,7 @@ devtools::install_github("rintaromasuda/bleaguer", force = TRUE)
 
 Sys.setlocale(locale = 'Japanese')
 print(paste0("Working Dir: ", getwd()))
+system("ls")
 
 ########
 # Load #
@@ -32,23 +33,25 @@ tryCatch({
     stop("No game to be processed.")
   }
   print(head(dataGames))
-  write.csv(dataGames, "games.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataGames, "delta/games.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
   print("########################")
   print("# Get data for summary #")
   print("########################")
   dataSummary <- GetSummaryData(webDr, dataGames)
   print(head(dataSummary))
-  write.csv(dataSummary, "summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataSummary, "delta/summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
 
   print("#########################")
   print("# Get data for boxscore #")
   print("#########################")
   dataBoxscore <- GetBoxscoreData(webDr, dataGames)
   print(head(dataBoxscore))
-  write.csv(dataBoxscore, "boxscore.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataBoxscore, "delta/boxscore.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
   webDr$close()
+
+  system("ls")
 
   # system("git clone https://github.com/rintaromasuda/bleaguer.git")
   # setwd("/bleaguer")

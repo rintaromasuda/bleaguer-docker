@@ -11,4 +11,6 @@ services:
       - selenium:selenium
     depends_on:
       - selenium
+    volumes:
+      - ./delta:/delta
 
