@@ -13,4 +13,6 @@ services:
       - selenium
     volumes:
       - ./delta:/delta
-
+    environment:
+      - SEASON=2019-20
+      - WEBDRHOSTNAME=selenium

@@ -8,6 +8,11 @@ Sys.setlocale(locale = 'Japanese')
 print(paste0("Working Dir: ", getwd()))
 system("ls")
 
+targetSeason <- Sys.getenv("SEASON")
+hostName <- Sys.getenv("WEBDRHOSTNAME")
+print(paste0("SEASON=", targetSeason))
+print(paste0("WEBDRHOSTNAME=", hostName))
+
 ########
 # Load #
 ########
@@ -22,12 +27,12 @@ source("GetBoxscoreData.R")
 exitStatus <- 0
 
 tryCatch({
-  webDr <- GetWebDriver("selenium", 4444L)
+  webDr <- GetWebDriver(hostName, 4444L)
 
   print("######################")
   print("# Get data for games #")
   print("######################")
-  dataGames <- GetGamesData(webDr, "2019-20")
+  dataGames <- GetGamesData(webDr, targetSeason)
   if(nrow(dataGames) <= 0)
   {
     stop("No game to be processed.")
