@@ -5,6 +5,7 @@ COPY Common.R .
 COPY GetGamesData.R .
 COPY GetSummaryData.R .
 COPY GetBoxscoreData.R .
+COPY UpdateGithub.R .
 
 RUN set -x && \
     apt-get update && \

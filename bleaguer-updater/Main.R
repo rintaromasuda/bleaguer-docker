@@ -20,11 +20,15 @@ source("Common.R")
 source("GetGamesData.R")
 source("GetSummaryData.R")
 source("GetBoxscoreData.R")
+source("UpdateGithub.R")
 
 ########
 # Main #
 ########
 exitStatus <- 0
+gamesFilePath <- "delta/games.csv"
+summaryFilePath <- "delta/summary.csv"
+boxscoreFilePath <- "delta/boxscore.csv"
 
 tryCatch({
   webDr <- GetWebDriver(hostName, 4444L)
@@ -38,35 +42,32 @@ tryCatch({
     stop("No game to be processed.")
   }
   print(head(dataGames))
-  write.csv(dataGames, "delta/games.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataGames, gamesFilePath, fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
   print("########################")
   print("# Get data for summary #")
   print("########################")
   dataSummary <- GetSummaryData(webDr, dataGames)
   print(head(dataSummary))
-  write.csv(dataSummary, "delta/summary.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataSummary, summaryFilePath, fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
 
   print("#########################")
   print("# Get data for boxscore #")
   print("#########################")
   dataBoxscore <- GetBoxscoreData(webDr, dataGames)
   print(head(dataBoxscore))
-  write.csv(dataBoxscore, "delta/boxscore.csv", fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
+  write.csv(dataBoxscore, boxscoreFilePath, fileEncoding = "UTF-8", row.names = FALSE, quote = FALSE)
   
   webDr$close()
 
-  system("ls")
+  print("#################")
+  print("# Update Github #")
+  print("#################")
+  UpdateGithub(targetSeason);
 
-  # system("git clone https://github.com/rintaromasuda/bleaguer.git")
-  # setwd("/bleaguer")
-  # system("git checkout -b user/rintarom/test2")
-  # system("cat DESCRIPTION > test.txt")
-  # system("echo \"tete\" > foo.txt ")
-  # system("ls")
-  # system("git add .")
-  # system("git commit -m \"My comment\"")
-  # system("git push --set-upstream origin user/rintarom/test2")
+  print("###################################")
+  print("# Finished updating bleaguer data #")
+  print("###################################")
 },
 error = function(e){
   print(e)
