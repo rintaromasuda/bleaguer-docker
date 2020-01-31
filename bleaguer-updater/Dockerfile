@@ -14,6 +14,7 @@ RUN set -x && \
       git
 
 RUN install2.r --error \
+      stringr \
       rvest \
       RSelenium
 
