@@ -7,12 +7,23 @@ UpdateGithub <- function(targetSeason, gamesFilePath, summaryFilePath, boxscoreF
   setwd("/bleaguer")
 
   branchName <- paste0("update/", format(Sys.time(), "%Y%m%d%H%M%S"))
+  print(paste0("Git branch name: ", branchName))
 
   # Paths to the delta files
   deltaGamesFile <- paste0("../", gamesFilePath)
   deltaSummaryFile <- paste0("../", summaryFilePath)
   deltaBoxscoreFile <- paste0("../", boxscoreFilePath)
 
+  print("Creating header-less delta files.")
+  deltaGamesNoHeader <- paste0(deltaGamesFile, ".noheader")
+  deltaSummaryNoHeader <- paste0(deltaSummaryFile, ".noheader")
+  deltaBoxscoreNoHeader <- paste0(deltaBoxscoreFile, ".noheader")
+
+  # Remove the first/header line from the delta files
+  system(paste("tail -n +2", deltaGamesFile, ">", deltaGamesNoHeader))
+  system(paste("tail -n +2", deltaSummaryFile, ">", deltaSummaryNoHeader))
+  system(paste("tail -n +2", deltaBoxscoreFile, ">", deltaBoxscoreNoHeader))
+  
   season <- stringr::str_replace(targetSeason, "-", "")
   gamesFileName <- paste0("games_", season, ".csv")
   summaryFileName <- paste0("games_summary_", season, ".csv")
@@ -29,9 +40,10 @@ UpdateGithub <- function(targetSeason, gamesFilePath, summaryFilePath, boxscoreF
   outputBoxscoreFile <- paste0("../output/", boxscoreFileName)
  
   # Appending the delta files to the files in the GIT repository
-  system(paste("cat", targetGamesFile, " ", deltaGamesFile, ">", outputGamesFile))
-  system(paste("cat", targetSummaryFile, " ", deltaSummaryFile, ">", outputSummaryFile))
-  system(paste("cat", targetBoxscoreFile, " ", deltaBoxscoreFile, ">", outputBoxscoreFile))
+  print("Appending the delta files to the files cloned from Github.")
+  system(paste("cat", targetGamesFile, " ", deltaGamesNoHeader, ">", outputGamesFile))
+  system(paste("cat", targetSummaryFile, " ", deltaSummaryNoHeader, ">", outputSummaryFile))
+  system(paste("cat", targetBoxscoreFile, " ", deltaBoxscoreNoHeader, ">", outputBoxscoreFile))
 
   #system("git add .")
   #system("git commit -m \"bleaguer-updater commit\"")
