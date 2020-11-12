@@ -15,5 +15,5 @@ services:
       - ./delta:/delta
       - ./output:/output
     environment:
-      - SEASON=2019-20
+      - SEASON=2020-21
       - WEBDRHOSTNAME=selenium

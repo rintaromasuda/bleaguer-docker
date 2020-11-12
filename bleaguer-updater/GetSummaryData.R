@@ -2,7 +2,7 @@
   urlDetail <- paste0("https://www.bleague.jp/game_detail/?ScheduleKey=",
                       as.character(key))
   print(urlDetail)
-  
+
   webDr$navigate(urlDetail)
   Sys.sleep(0.5) # Consider making this event-based
   pageSource <- webDr$getPageSource()
@@ -147,13 +147,43 @@ GetSummaryData <- function(webDr, dataGames){
   
   result <- data.frame()
   
-  for (idx in seq(1:nrow(dataGames))) {
-    key <- dataGames[idx,]$ScheduleKey
-    homeTeamId <- dataGames[idx,]$HomeTeamId
-    awayTeamId <- dataGames[idx,]$AwayTeamId
+  gameIndex <- 1
+  gameCount <- nrow(dataGames)
+  tryCount <- 1
+  tryThreshold <- 5
+  while (gameIndex <= gameCount) {
+    tryCatch(
+      {
+        isFinished <- FALSE
+        key <- dataGames[gameIndex,]$ScheduleKey
+        homeTeamId <- dataGames[gameIndex,]$HomeTeamId
+        awayTeamId <- dataGames[gameIndex,]$AwayTeamId
 
-    record <- .ScrapeSummaryPage(webDr, key, homeTeamId, awayTeamId)
-    result <- rbind(result, record)
+        if (tryCount <= tryThreshold) {
+          record <- .ScrapeSummaryPage(webDr, key, homeTeamId, awayTeamId)
+          result <- rbind(result, record)
+        } else {
+          print(paste0("Gave up scraping Summary of :", key))
+          g_failedSummary <<- append(g_failedSummary, key)
+        }
+
+        isFinished <- TRUE
+      },
+      error = function(e){
+        # Re-opening the browser
+        print(paste0("[", tryCount,"] Re-opening the browser..."))
+        webDr$close()
+        webDr$open()
+      },
+      finally = {
+        if (isFinished) {
+          gameIndex <- gameIndex + 1
+          tryCount <- 1
+        } else {
+          tryCount <- tryCount + 1
+        }
+      }
+    )
   }
   
   result$Q1 <- result$`1Q`

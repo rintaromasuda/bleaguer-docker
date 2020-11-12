@@ -7,7 +7,7 @@
   print(urlBoxscore)
   
   tryCount <- 1
-  tryThreshold <- 60
+  tryThreshold <- 5
   isSuccess <- FALSE
   # Post-season Game 3s in 2016-17 and 2017-18 have less tables (because they are short)
   numTables <- ifelse(eventId %in% c(300,400,800), 9, 13)
@@ -99,15 +99,45 @@ GetBoxscoreData <- function(webDr, dataGames){
   library(rvest)
   
   result <- data.frame()
-  
-  for (idx in seq(1:nrow(dataGames))) {
-    key <- dataGames[idx,]$ScheduleKey
-    homeTeamId <- dataGames[idx,]$HomeTeamId
-    awayTeamId <- dataGames[idx,]$AwayTeamId
-    eventId <- dataGames[idx,]$EventId
 
-    record <- .ScrapeBoxscorePage(webDr, key, eventId, homeTeamId, awayTeamId)
-    result <- rbind(result, record)
+  gameIndex <- 1
+  gameCount <- nrow(dataGames)
+  tryCount <- 1
+  tryThreshold <- 5
+  while (gameIndex <= gameCount) {
+    tryCatch(
+      {
+          isFinished <- FALSE
+        key <- dataGames[gameIndex,]$ScheduleKey
+        homeTeamId <- dataGames[gameIndex,]$HomeTeamId
+        awayTeamId <- dataGames[gameIndex,]$AwayTeamId
+        eventId <- dataGames[gameIndex,]$EventId
+
+        if (tryCount <= tryThreshold) {
+          record <- .ScrapeBoxscorePage(webDr, key, eventId, homeTeamId, awayTeamId)
+          result <- rbind(result, record)
+        } else {
+          print(paste0("Gave up scraping BoxScore of :", key))
+          g_failedBoxscore <<- append(g_failedBoxscore, key)
+        }
+
+        isFinished <- TRUE
+      },
+      error = function(e){
+        # Re-opening the browser
+        print(paste0("[", tryCount,"] Re-opening the browser..."))
+        webDr$close()
+        webDr$open()
+      },
+      finally = {
+        if (isFinished) {
+          gameIndex <- gameIndex + 1
+          tryCount <- 1
+        } else {
+          tryCount <- tryCount + 1
+        }
+      }
+    )
   }
   
   result$Number <- result$`#`
@@ -118,6 +148,7 @@ GetBoxscoreData <- function(webDr, dataGames){
   result$F3GA <- result$`3FGA`
   result$MIN.STR <- result$MIN
   result$MIN <- bleaguer::ConvertMinStrToDec(result$MIN.STR)
+  result$DUNK <- 0 # DUNK column has been removed at 2020-21 seascon
 
   result <- result %>%
     dplyr::select(

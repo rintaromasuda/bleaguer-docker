@@ -1,8 +1,13 @@
-GetWebDriver <- function(serverName, portNumber){
+g_serverName <- ""
+g_portNumber <- 0
+g_failedSummary <- c()
+g_failedBoxscore <- c()
+
+GetWebDriver <- function(){
   library(RSelenium)
   
-  webDr <- RSelenium::remoteDriver(remoteServerAddr = serverName,
-                                   port = portNumber,
+  webDr <- RSelenium::remoteDriver(remoteServerAddr = g_serverName,
+                                   port = g_portNumber,
                                    browserName = "chrome")
   tryCount <- 1
   tryThreshold <- 60

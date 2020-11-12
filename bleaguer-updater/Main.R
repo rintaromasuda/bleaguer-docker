@@ -17,6 +17,9 @@ print(paste0("WEBDRHOSTNAME=", hostName))
 # Load #
 ########
 source("Common.R")
+g_serverName <- hostName
+g_portNumber <- 4444L
+
 source("GetGamesData.R")
 source("GetSummaryData.R")
 source("GetBoxscoreData.R")
@@ -31,7 +34,7 @@ summaryFilePath <- "delta/summary.csv"
 boxscoreFilePath <- "delta/boxscore.csv"
 
 tryCatch({
-  webDr <- GetWebDriver(hostName, 4444L)
+  webDr <- GetWebDriver()
 
   print("######################")
   print("# Get data for games #")
@@ -76,6 +79,13 @@ error = function(e){
 finally = {
   # Remove bleaguer at the end so that next time you can install it again
   remove.packages("bleaguer")
+
+  # Display faied ScheduleKeys
+  print("Summary scraping failed for games: ")
+  print(g_failedSummary)
+
+  print("Boxscore scraping failed for games: ")
+  print(g_failedBoxscore)  
 }
 )
 
