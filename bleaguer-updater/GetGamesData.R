@@ -58,8 +58,8 @@ GetGamesData <- function(webDr, season){
   result <- data.frame()
   
   leagues <- c("B1", "B2")
-  b1.events <- c(2)
-  b2.events <- c(7)
+  b1.events <- c(3)
+  b2.events <- c(8)
 
   keysInData <- subset(bleaguer::b.games, Season == season)$ScheduleKey
     
@@ -102,8 +102,13 @@ GetGamesData <- function(webDr, season){
         pageSource <- webDr$getPageSource()
         htmlTeam <- xml2::read_html(pageSource[[1]], encoding = "utf-8")
         
+        btnName <- paste0("btn btn-bk schedule-b",
+                          gsub("B", "", league),
+                          "-report")
         urlGames <- htmlTeam %>%
-          rvest::html_nodes(xpath = "//a[@class=\"btn btn-rd\"]") %>%
+          rvest::html_nodes(xpath = paste0("//a[@class=\"",
+                                           btnName,
+                                           "\"]")) %>%
           rvest::html_attr("href")
         print(paste0("Number of games found: ", length(urlGames)))
         gameIndex <- 1

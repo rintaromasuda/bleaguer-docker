@@ -1,7 +1,7 @@
 version: '3'
 services:
   selenium:
-    image: selenium/standalone-chrome
+    image: selenium/standalone-chrome:96.0
     ports:
       - 4444:4444
   updater:
@@ -15,5 +15,5 @@ services:
       - ./delta:/delta
       - ./output:/output
     environment:
-      - SEASON=2020-21
+      - SEASON=2021-22
       - WEBDRHOSTNAME=selenium
