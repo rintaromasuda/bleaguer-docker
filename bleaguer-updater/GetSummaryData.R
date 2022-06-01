@@ -10,8 +10,8 @@
   tablesDetail <- rvest::html_table(htmlDetail)
   
   # Table for quarter and overtime scores. We do NOT support overtime 5th and later.
-  qtScore <- subset(tablesDetail[[1]], X2 != "EX1" & X2 != "EX2" & X2 != "EX3" & X2 != "EX4")
-  otScore <- subset(tablesDetail[[1]], X2 == "EX1" | X2 == "EX2" | X2 == "EX3" | X2 == "EX4")
+  qtScore <- subset(tablesDetail[[1]], X2 != "OT1" & X2 != "OT2" & X2 != "OT3" & X2 != "OT4")
+  otScore <- subset(tablesDetail[[1]], X2 == "OT1" | X2 == "OT2" | X2 == "OT3" | X2 == "OT4")
   
   if (nrow(subset(qtScore, (X2 == "1Q" | X2 == "2Q" | X2 == "3Q" | X2 == "4Q" | X2 == "F"))) != 5) {
     qtScore[1, "X2"] <- "1Q"
@@ -22,7 +22,7 @@
   
   # Fill 0 for overtimes that didn't happen
   for (i in seq(1:4)) {
-    ot <- paste0("EX", as.character(i))
+    ot <- paste0("OT", as.character(i))
     if (nrow(subset(otScore, X2 == ot)) <= 0) {
       df <- data.frame(X1 = 0, X2 = ot, X3 = 0)
       otScore <- rbind(otScore, df)
@@ -191,10 +191,10 @@ GetSummaryData <- function(webDr, dataGames){
   result$Q3 <- result$`3Q`
   result$Q4 <- result$`4Q`
   
-  result$OT1 <- result$EX1
-  result$OT2 <- result$EX2
-  result$OT3 <- result$EX3
-  result$OT4 <- result$EX4
+  result$OT1 <- result$OT1
+  result$OT2 <- result$OT2
+  result$OT3 <- result$OT3
+  result$OT4 <- result$OT4
   
   result$PTS <- result$F
   

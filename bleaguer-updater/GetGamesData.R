@@ -58,8 +58,8 @@ GetGamesData <- function(webDr, season){
   result <- data.frame()
   
   leagues <- c("B1", "B2")
-  b1.events <- c(3)
-  b2.events <- c(8)
+  b1.events <- c(2)
+  b2.events <- c(7)
 
   keysInData <- subset(bleaguer::b.games, Season == season)$ScheduleKey
     

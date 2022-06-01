@@ -16,6 +16,9 @@
     pageSource <- webDr$getPageSource()
     htmlBoxscore <- xml2::read_html(pageSource[[1]])
     tablesBoxscore <- rvest::html_table(htmlBoxscore)
+
+    print(paste0("# of tables -> ", length(tablesBoxscore)))
+
     if ((length(tablesBoxscore) >= numTables) &&
         (nrow(tablesBoxscore[[4]]) > 0) &&
         (nrow(tablesBoxscore[[5]]) > 0)) {
